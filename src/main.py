@@ -23,7 +23,7 @@ while True:
     
     screen.fill((0, 0, 0))
 
-    if delay % 1 == 0:
+    if delay % 5 == 0:
         backtracking.update()
 
     backtracking.draw(screen)
