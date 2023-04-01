@@ -12,6 +12,8 @@ class Backtracking:
         self.walls = [(True, True, True, True)]
         #           North    South     West    East
         self.dir = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+        
+        self.finished = False;
     
     def calculate_wall(self, cell, w, e, n, s):
             cx, cy = cell
@@ -102,6 +104,9 @@ class Backtracking:
                 # backtrack, but don't remove the last cell, it will be the green square
                 if len(self.cells) > 1:
                     self.cells.remove(self.cells[-1])
+                
+                else:
+                    self.finished = True
             
             self.dir = [(0, -1), (0, 1), (-1, 0), (1, 0)]
     
