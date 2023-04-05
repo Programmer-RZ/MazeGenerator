@@ -31,16 +31,16 @@ class Player:
         self.vel.y = 0
 
         if keys[pygame.K_UP]:
-            self.vel.y = -1
+            self.vel.y = -2
         
         if keys[pygame.K_DOWN]:
-            self.vel.y = 1
+            self.vel.y = 2
         
         if keys[pygame.K_LEFT]:
-            self.vel.x = -1
+            self.vel.x = -2
         
         if keys[pygame.K_RIGHT]:
-            self.vel.x = 1
+            self.vel.x = 2
     
     def collision(self):
         future_x, future_y = self.pos.x + self.vel.x, self.pos.y + self.vel.y

@@ -1,5 +1,6 @@
 import pygame
 from random import choice, randint
+from math import sqrt, pow
 
 from const import *
 
@@ -14,6 +15,23 @@ class Backtracking:
         self.dir = [(0, -1), (0, 1), (-1, 0), (1, 0)]
         
         self.finished = False;
+    
+        self.dead_ends = []
+        self.end = (-1, -1)
+    
+    def find_end(self):
+        longest_dist = 0
+        sx, sy = self.cells[0]
+        for end in self.dead_ends:
+            ex, ey = end
+
+            # sqrt((x2 - x1)^2 + (y2 - y1)^2)
+            dist = sqrt(pow((sx - ex), 2) + pow((sy - ey), 2))
+
+            if abs(dist) > longest_dist:
+                longest_dist = dist
+                self.end = (ex, ey)
+            
     
     def calculate_wall(self, cell, w, e, n, s):
             cx, cy = cell
@@ -103,10 +121,12 @@ class Backtracking:
             if len(self.dir) == 0:
                 # backtrack, but don't remove the last cell, it will be the green square
                 if len(self.cells) > 1:
+                    self.dead_ends.append(self.cells[-1])
                     self.cells.remove(self.cells[-1])
                 
                 else:
                     self.finished = True
+                    self.find_end()
             
             self.dir = [(0, -1), (0, 1), (-1, 0), (1, 0)]
     
@@ -114,11 +134,15 @@ class Backtracking:
             
         for index, cell in enumerate(self.all_cells):
             # draw cell, if cell is green square, draw green square
+            # if cell is end cell, draw end cell
             color = (0, 0, 0)
-            if cell != self.cells[-1]:
-                color = (60, 60, 60)
-            else:
+            if cell == self.cells[-1]:
                 color = (0, 255, 0)
+            
+            elif cell == self.end:
+                color = (255, 0, 0)
+            else:
+                color = (60, 60, 60)
 
             cell_x, cell_y = cell
             cell_x -= 1
