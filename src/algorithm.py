@@ -18,6 +18,8 @@ class Backtracking:
     
         self.dead_ends = []
         self.end = (-1, -1)
+
+        self.cell_size = CELL_SIZE
     
     def find_end(self):
         longest_dist = 0
@@ -37,8 +39,8 @@ class Backtracking:
             cx, cy = cell
             cx -= 1
             cy -= 1
-            cx *= CELL_SIZE
-            cy *= CELL_SIZE
+            cx *= self.cell_size
+            cy *= self.cell_size
 
             west_line = []
             east_line = []
@@ -46,16 +48,16 @@ class Backtracking:
             north_line = []
 
             if w:
-                west_line = [(cx, cy), (cx, cy + CELL_SIZE)]
+                west_line = [(cx, cy), (cx, cy + self.cell_size)]
             
             if e:
-                east_line = [(cx + CELL_SIZE, cy), (cx + CELL_SIZE, cy + CELL_SIZE)]
+                east_line = [(cx + self.cell_size, cy), (cx + self.cell_size, cy + self.cell_size)]
             
             if n:
-                north_line = [(cx, cy), (cx + CELL_SIZE, cy)]
+                north_line = [(cx, cy), (cx + self.cell_size, cy)]
             
             if s:
-                south_line = [(cx, cy + CELL_SIZE), (cx + CELL_SIZE, cy + CELL_SIZE)]
+                south_line = [(cx, cy + self.cell_size), (cx + self.cell_size, cy + self.cell_size)]
             
             return (west_line, east_line, north_line, south_line)
 
@@ -126,11 +128,12 @@ class Backtracking:
                 
                 else:
                     self.finished = True
+                    self.cell_size *= SCROLLING_SCALE
                     self.find_end()
             
             self.dir = [(0, -1), (0, 1), (-1, 0), (1, 0)]
     
-    def draw(self, screen):
+    def draw(self, screen, cx, cy):
             
         for index, cell in enumerate(self.all_cells):
             # draw cell, if cell is green square, draw green square
@@ -148,7 +151,11 @@ class Backtracking:
             cell_x -= 1
             cell_y -= 1
 
-            pygame.draw.rect(screen, color, (cell_x * CELL_SIZE, cell_y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+            cell_x *= self.cell_size
+            cell_y *= self.cell_size
+
+            if cell_x + cx > -self.cell_size and cell_x + cx < WIDTH and cell_y + cy > -self.cell_size and cell_y + cy < HEIGHT:
+                pygame.draw.rect(screen, color, (cell_x + cx, cell_y + cy, self.cell_size, self.cell_size))
 
             # draw walls
             w, e, n, s = self.walls[index]
@@ -158,14 +165,42 @@ class Backtracking:
             west, east, north, south = walls
 
             if len(west) != 0:
-                pygame.draw.line(screen, (255, 255, 255), west[0], west[1], 3)
+                sx, sy = west[0]
+                ex, ey = west[1]
+                
+                is_end_inbounds = (ex + cx > 0 and ex + cx < WIDTH and ey + cy > 0 and ey + cy < HEIGHT)
+                is_start_inbounds = (sx + cx > 0 and sx + cx < WIDTH and sy + cy > 0 and sy + cy < HEIGHT)
+
+                if is_end_inbounds or is_start_inbounds:
+                    pygame.draw.line(screen, (255, 255, 255), (sx + cx, sy + cy), (ex + cx, ey + cy), 3)
             
             if len(east) != 0:
-                pygame.draw.line(screen, (255, 255, 255), east[0], east[1], 3)
+                sx, sy = east[0]
+                ex, ey = east[1]
+
+                is_end_inbounds = (ex + cx > 0 and ex + cx < WIDTH and ey + cy > 0 and ey + cy < HEIGHT)
+                is_start_inbounds = (sx + cx > 0 and sx + cx < WIDTH and sy + cy > 0 and sy + cy < HEIGHT)
+
+                if is_end_inbounds or is_start_inbounds:
+                    pygame.draw.line(screen, (255, 255, 255), (sx + cx, sy + cy), (ex + cx, ey + cy), 3)
             
             if len(north) != 0:
-                pygame.draw.line(screen, (255, 255, 255), north[0], north[1], 3)
+                sx, sy = north[0]
+                ex, ey = north[1]
+
+                is_end_inbounds = (ex + cx > 0 and ex + cx < WIDTH and ey + cy > 0 and ey + cy < HEIGHT)
+                is_start_inbounds = (sx + cx > 0 and sx + cx < WIDTH and sy + cy > 0 and sy + cy < HEIGHT)
+
+                if is_end_inbounds or is_start_inbounds:
+                    pygame.draw.line(screen, (255, 255, 255), (sx + cx, sy + cy), (ex + cx, ey + cy), 3)
             
             if len(south) != 0:
-                pygame.draw.line(screen, (255, 255, 255), south[0], south[1], 3)
+                sx, sy = south[0]
+                ex, ey = south[1]
+                
+                is_end_inbounds = (ex + cx > 0 and ex + cx < WIDTH and ey + cy > 0 and ey + cy < HEIGHT)
+                is_start_inbounds = (sx + cx > 0 and sx + cx < WIDTH and sy + cy > 0 and sy + cy < HEIGHT)
+
+                if is_end_inbounds or is_start_inbounds:
+                    pygame.draw.line(screen, (255, 255, 255), (sx + cx, sy + cy), (ex + cx, ey + cy), 3)
     

@@ -6,15 +6,16 @@ class Player:
     def __init__(self, walls, cells, start):
         self.walls = walls
         self.cells = cells
+        self.cell_size = CELL_SIZE
         
         x, y = start
 
-        self.width = 20
-        self.height = 20
+        self.width = 20 * SCROLLING_SCALE
+        self.height = 20 *  SCROLLING_SCALE
 
         self.pos = pygame.math.Vector2(
-            (x - 1) * CELL_SIZE + CELL_SIZE / 2 - self.width / 2, 
-            (y - 1) * CELL_SIZE + CELL_SIZE / 2 - self.height / 2)
+            (x - 1) * self.cell_size * SCROLLING_SCALE + self.cell_size / 2 * SCROLLING_SCALE - self.width / 2, 
+            (y - 1) * self.cell_size * SCROLLING_SCALE + self.cell_size / 2 * SCROLLING_SCALE - self.height / 2)
         
         self.vel = pygame.math.Vector2(0, 0)
     
@@ -31,22 +32,22 @@ class Player:
         self.vel.y = 0
 
         if keys[pygame.K_UP]:
-            self.vel.y = -2
+            self.vel.y = -2 * SCROLLING_SCALE
         
         if keys[pygame.K_DOWN]:
-            self.vel.y = 2
+            self.vel.y = 2 * SCROLLING_SCALE
         
         if keys[pygame.K_LEFT]:
-            self.vel.x = -2
+            self.vel.x = -2 * SCROLLING_SCALE
         
         if keys[pygame.K_RIGHT]:
-            self.vel.x = 2
+            self.vel.x = 2 * SCROLLING_SCALE
     
     def collision(self):
         future_x, future_y = self.pos.x + self.vel.x, self.pos.y + self.vel.y
         # find row and col of player
-        row = int(future_x / CELL_SIZE) + 1
-        col = int(future_y / CELL_SIZE) + 1
+        row = int(future_x / self.cell_size) + 1
+        col = int(future_y / self.cell_size) + 1
 
         neighbour_walls = [
             (row + 1, col),
@@ -74,7 +75,7 @@ class Player:
             west, east, north, south = wall
 
             if west:
-                rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, 3, CELL_SIZE)
+                rect = pygame.Rect(x * self.cell_size, y * self.cell_size, 3, self.cell_size)
                 if rect.colliderect(pygame.Rect(future_x, self.pos.y, self.width, self.height)):
                     self.vel.x = 0
                 
@@ -82,7 +83,7 @@ class Player:
                     self.vel.y = 0
             
             if east:
-                rect = pygame.Rect(x * CELL_SIZE + CELL_SIZE, y * CELL_SIZE, 3, CELL_SIZE)
+                rect = pygame.Rect(x * self.cell_size + self.cell_size, y * self.cell_size, 3, self.cell_size)
                 if rect.colliderect(pygame.Rect(future_x, self.pos.y, self.width, self.height)):
                     self.vel.x = 0
                 
@@ -90,7 +91,7 @@ class Player:
                     self.vel.y = 0
             
             if north:
-                rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, 3)
+                rect = pygame.Rect(x * self.cell_size, y * self.cell_size, self.cell_size, 3)
                 if rect.colliderect(pygame.Rect(future_x, self.pos.y, self.width, self.height)):
                     self.vel.x = 0
                 
@@ -98,7 +99,7 @@ class Player:
                     self.vel.y = 0
             
             if south:
-                rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE + CELL_SIZE, CELL_SIZE, 3)
+                rect = pygame.Rect(x * self.cell_size, y * self.cell_size + self.cell_size, self.cell_size, 3)
                 if rect.colliderect(pygame.Rect(future_x, self.pos.y, self.width, self.height)):
                     self.vel.x = 0
                 
@@ -114,8 +115,8 @@ class Player:
             self.vel.y
 
     
-    def draw(self, screen):
-        pygame.draw.rect(screen, (0, 0, 255), (self.pos.x, 
-                                               self.pos.y, 
+    def draw(self, screen, cx, cy):
+        pygame.draw.rect(screen, (0, 0, 255), (self.pos.x + cx, 
+                                               self.pos.y + cy, 
                                                self.width, 
                                                self.height))
